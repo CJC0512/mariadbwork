@@ -22,7 +22,7 @@ SELECT CONVERT('2023-12-27', DATE);
 SELECT CONVERT('2023#12#27', DATE);
 
 -- 3) 숫자 → 문자
-SELECT /=CONCAT(CAST(1000 AS CHAR), '원');
+SELECT CONCAT(CAST(1000 AS CHAR), '원');
 SELECT 1000 + '원';	--  문자 '원'이 0으로 됨 
 
 -- 암시적 현변환

@@ -95,11 +95,21 @@ INSERT
 VALUES
 (null, 'user03', 'pass03', '이순신', '남', '010-777-7777', 'lee222@gmail.com');
 
+-- user_no에 중복값 적용(에러 발생)
+INSERT 
+  INTO user_primarykey
+(user_no, user_id, user_pwd, user_name, gender, phone, email)
+VALUES
+(2, 'user03', 'pass03', '이순신', '남', '010-777-7777', 'lee222@gmail.com');
+
+
 
 -- 4. foreign key: 참조된 다른 테이블에서 제공하는 값만 사용할 수 있음.		--  놓침. github보고 수정!
 -- 상대방 테이블의 pk가 본인 테이블에 넘어오면 그것이 foreign key가 된다.
 -- restrict, cascade, set null, no action 등 delete시 동작을 설정할 수 있다.
 -- https://mariadb.com/kb/en/foreign-keys/ 참고
+
+-- 4-1. 회원등급 부모 테이블 먼저 생성
 DROP TABLE IF EXISTS user_grade;
 CREATE TABLE IF NOT EXISTS user_grade (
     grade_code INT NOT NULL UNIQUE,
@@ -115,6 +125,7 @@ VALUES
 
 SELECT * FROM user_grade;
 
+-- 4-2.회원 자식 테이블 이후에 생성
 DROP TABLE IF EXISTS user_foreignkey1;
 CREATE TABLE IF NOT EXISTS user_foreignkey1 (
     user_no INT PRIMARY KEY,
@@ -138,7 +149,7 @@ VALUES
 
 SELECT * FROM user_foreignkey1;
 
--- 부모테이블에 없는 등급으로 insert
+-- 부모 테이블에 없는 등급으로 insert
 INSERT 
   INTO user_foreignkey1
 (user_no, user_id, user_pwd, user_name, gender, phone, email, grade_code)
