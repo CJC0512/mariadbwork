@@ -110,8 +110,9 @@ SELECT
 	,		emp_name
 	,		hire_date
 	FROM employee
-	WHERE NOT emp_name LIKE '김%';
-
+	WHERE NOT emp_name LIKE '김%';		
+	-- %란 '와일드 카드'라 부르며, 0개 이상의 문자를 뜻한다. 
+	-- _란 '언더 스코어'라 부르며, 1개의 문자를 뜻한다.
 
 -- 14. EMPLOYEE 테이블에서 '하'문자가 이름에 포함 된
 -- 직원의 이름, 주민번호, 부서코드 조회
@@ -202,12 +203,11 @@ SELECT
 -- 사원명, 직급명, 급여, 연봉을 조회하시오.
 -- 연봉에 보너스포인트를 적용하시오.(20명)
 
-
 SELECT 
 			a.EMP_NAME
 	,		c.job_NAME
 	,		a.salary '급여'
-	,		12 * a.salary * (1+a.BONUS) '연봉'
+	,		12 * a.salary * (1+ IFNULL(a.BONUS,0)) '연봉'
 	FROM employee a
 	JOIN job c ON (a.JOB_CODE = c.JOB_CODE)
 	JOIN sal_grade d ON (a.SAL_LEVEL = d.SAL_LEVEL)
@@ -227,7 +227,7 @@ SELECT
 	WHERE e.national_code IN ('KO', 'JP');
 
 
--- 7. 같은 부서에 근무하는 직원들의 사원명, 부서코드, 동료이름을 조회하시오.
+-- 7. 같은 부서에 근무하는 직원들의 사원명, 부서코드, 동료이름을 조회하시오.		-- 보통 문제에는 ID까지 포함되어야 정상(동명이인 문제)
 -- self join 사용(60명)
 SELECT 
 			a.emp_name
@@ -235,8 +235,10 @@ SELECT
 	,		b.emp_name
 	FROM employee a
 	JOIN employee b ON (a.DEPT_CODE = b.DEPT_CODE)
-	WHERE a.DEPT_CODE = b.dept_code
-	AND NOT a.EMP_NAME = b.emp_name;
+	WHERE a.DEPT_CODE = b.dept_code		-- 이 조건은 생략되어도 됨.
+	AND NOT a.EMP_NAME = b.emp_name		-- NAME 보다는 ID로 비교해야함. (동명이인 문제)
+-- 	WHERE A.EMP_ID != B.EMP_ID                       -- 나 자신을 제외한 동료만 조회(동명이인을 고려해 사번으로 비교)
+	ORDER BY 1;
 	
 
 -- 8. 보너스포인트가 없는 직원들 중에서 직급코드가 J4와 J7인 직원들의 사원명, 직급명, 급여를 조회하시오.
@@ -270,11 +272,12 @@ SELECT
 	,		e.LOCAL_NAME
 	,		a.SALARY
 	FROM employee a
-	JOIN job c ON (a.job_code = c.JOB_CODE)
-	JOIN department b ON (a.dept_code = b.DEPT_ID)
-	JOIN location e ON (b.LOCATION_ID = e.LOCAL_CODE)
+	JOIN job c ON (a.job_code = c.JOB_CODE)		-- left join을 통해 직급이 없는 사원도 조회해야함.
+	JOIN department b ON (a.dept_code = b.DEPT_ID)		-- left join을 통해 부서가 없는 사원도 조회해야함.
+	JOIN location e ON (b.LOCATION_ID = e.LOCAL_CODE)		-- left join을 통해 local_code가 누락된 행도 조회.
 	WHERE a.job_code = 'J6'
--- 	AND e.LOCAL_NAME LIKE 'ASIA%';
+-- 	WHERE c.JOB_NAME = '대리'		-- 이게 더 직관적.
+	AND e.LOCAL_NAME LIKE '%ASIA%';
 -- 	AND b.LOCATION_ID IN ('L1','L2','L3');
 
 
