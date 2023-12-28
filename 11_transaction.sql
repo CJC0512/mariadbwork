@@ -7,6 +7,8 @@ SET autocommit = 0;
 -- 또는
 SET autocommit = OFF;
 
+
+
 -- commit 이후에는 Rollback을 해도 Rollback이 적용되지 않는다.
 START TRANSACTION;	-- transaction 시작 위치로 지정
 
